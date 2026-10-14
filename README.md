@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://ghostty.org"><img src="assets/desktop.7f2fda95.svg" width="100%" alt="desktop · rice/ghostty"></a>
+  <a href="https://github.com/Fjx-dylanZ?tab=repositories"><img src="assets/desktop.0a832a49.svg" width="100%" alt="desktop · ~/zsh"></a>
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@
 <p align="center"><sub>
   click a key, then <b>Create</b>: the focus moves for everyone in ~30s<br>
   no GitHub account? press anonymously: <a href="https://hjkl.dylanpict.workers.dev/gg"><b>gg</b></a> · <a href="https://hjkl.dylanpict.workers.dev/h"><b>h</b></a> · <a href="https://hjkl.dylanpict.workers.dev/j"><b>j</b></a> · <a href="https://hjkl.dylanpict.workers.dev/k"><b>k</b></a> · <a href="https://hjkl.dylanpict.workers.dev/l"><b>l</b></a><br>
-  <b>8</b> presses so far · last <code>j</code>
+  <b>9</b> presses so far · last <code>k</code>
 </sub></p>
 
 <br>
@@ -27,7 +27,7 @@
 <p align="center"><sub>made <a href="https://github.com/Fjx-dylanZ/native-space-kit">native-space-kit</a> · <a href="https://github.com/Fjx-dylanZ/obsidian-drawer-explorer">obsidian-drawer-explorer</a> · <a href="https://github.com/Fjx-dylanZ/omp-subagent-entropy">omp-subagent-entropy</a> · <a href="https://github.com/Fjx-dylanZ/appletv-remote-tui">appletv-remote-tui</a> · patches to <a href="https://github.com/karinushka/paneru">paneru</a></sub></p>
 
 <p align="center">
-  <img src="assets/widgets/garden.812b7295.svg" width="100%" alt="zen garden">
+  <img src="assets/widgets/garden.71d1c83f.svg" width="100%" alt="zen garden">
 </p>
 
 <p align="right"><sub>rebuilt daily by GitHub Actions · colors: Ghostty Citruszest + my JankyBorders config · data from 2026-10-14</sub></p>
