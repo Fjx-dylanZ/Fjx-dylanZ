@@ -1926,11 +1926,17 @@ WRITTEN: set[Path] = set()
 
 
 def write_asset(rel: str, content: str) -> str:
+    """Write a generated file with its content hash in the name (desktop.svg -> desktop.1a2b3c4d.svg)
+    and return the path the README should use. A new version gets a new path: a ?v= query wouldn't
+    do, because GitHub's raw/ links redirect to raw.githubusercontent.com without it, and that
+    caches every path for five minutes."""
+    stem, _, ext = rel.rpartition(".")
+    rel = f"{stem}.{hashlib.sha1(content.encode()).hexdigest()[:8]}.{ext}"
     path = ASSETS / rel
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(content)
     WRITTEN.add(path)
-    return f"assets/{rel}?v={hashlib.sha1(content.encode()).hexdigest()[:8]}"
+    return f"assets/{rel}"
 
 
 def prune_assets() -> None:
