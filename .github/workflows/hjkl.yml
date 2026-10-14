@@ -25,7 +25,8 @@ jobs:
       - name: Apply the key, render and push
         env:
           # Untrusted input: passed through env and validated by build.py, never interpolated into the script.
-          TITLE: ${{ github.event_name == 'repository_dispatch' && format('hjkl: {0}', github.event.client_payload.key) || github.event.issue.title }}
+          # (quoted: "hjkl: {0}" would otherwise read as a YAML mapping)
+          TITLE: "${{ github.event_name == 'repository_dispatch' && format('hjkl: {0}', github.event.client_payload.key) || github.event.issue.title }}"
           LOGIN: ${{ github.event.issue.user.login }}  # empty for anonymous presses; only used to say thanks
         run: |
           git config user.name "github-actions[bot]"
