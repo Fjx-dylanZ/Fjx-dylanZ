@@ -4,10 +4,12 @@
 login = "Fjx-dylanZ"
 name = "Dylan Zhang"
 tagline = "probably editing a dotfile right now"
+# The start screen's word in block letters; each character needs a glyph in LOWER (build.py).
+logo = "fjx-dylanz"
 education = "Columbia '24 · Emory '22"
 # `cat now.txt` in the zsh pane prints "<now_prefix> <phrase>", the phrase morphing through
 # this list on a loop (about 1.7s each). Keep phrases under ~28 characters. The glitch phrase sits
-# late in the list so its crash lands after the start screen has finished drawing (~18s).
+# late in the list so its crash lands after the start screen has finished drawing (~19s).
 now_prefix = "working on the next"
 now = [
   "tui", "espresso", "obsidian plugin", "hyperparameter tuning", "yak to shave", "cli",
@@ -23,7 +25,7 @@ made = ["native-space-kit", "obsidian-drawer-explorer", "omp-subagent-entropy", 
 # Upstream projects I've had changes merged into (owner/repo).
 patches = ["karinushka/paneru"]
 
-# Extra widgets around the desktop, any of: start (my name drawn back from a rough ASCII smudge
+# Extra widgets around the desktop, any of: start (`logo` drawn back from a rough ASCII smudge
 # with sped-up vim motions, above the desktop) and garden (the zen garden below, see [garden]).
 widgets = ["start", "garden"]
 

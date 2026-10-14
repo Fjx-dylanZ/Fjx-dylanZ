@@ -1093,6 +1093,11 @@ LOWER = {
     "l": ["██", "██", "██", "██", "██", "██", "██"],
     "a": ["", "", " █████", "     ██", " ██████", "██   ██", " ██████"],
     "n": ["", "", "██████", "██   ██", "██   ██", "██   ██", "██   ██"],
+    "f": ["   ███", "  ██", "██████", "  ██", "  ██", "  ██", "  ██"],
+    "j": ["  ██", "", "  ██", "  ██", "  ██", "  ██", "  ██", "  ██", "███"],
+    "x": ["", "", "██   ██", " ██ ██", "  ███", " ██ ██", "██   ██"],
+    "z": ["", "", "███████", "   ███", "  ███", " ███", "███████"],
+    "-": ["", "", "", "", "█████"],
 }
 BOX = {"═": "lr", "║": "ud", "╔": "rd", "╗": "ld", "╚": "ur", "╝": "ul",
        "╠": "udr", "╣": "udl", "╦": "lrd", "╩": "lru", "╬": "udlr"}
@@ -1312,22 +1317,28 @@ class Sprites:
 
 
 def start_widget(cfg: dict) -> str:
-    """The start screen: `dylan` as a rough ASCII smudge that can't be read, open in nvim, drawn
-    back into block letters by sped-up vim motions (the keys stream past at the bottom), then the
-    tagline typed under them at normal speed and written with :w. It plays once per page view and
-    holds the finished screen.
+    """The start screen: the `logo` word as a rough ASCII smudge that can't be read, open in nvim,
+    drawn back into block letters by sped-up vim motions (the keys stream past at the bottom), then
+    the tagline typed under them at normal speed and written with :w. It plays once per page view
+    and holds the finished screen.
 
     Edits pile up, so each is its own shape over the smudge, shown from when it's made. The cursor,
     gutter, status line and key stream run their own step-end timelines over the same span, each
     holding its last frame."""
-    W, size, lh, pad, margin = 880, 19, 22, 14, 3
-    cw, rows_shown = size * CW, 11
-    top, gx = 42, 18                       # first buffer row; gutter's left edge
+    word = cfg["logo"]
+    if missing := sorted(set(word) - set(LOWER)):
+        sys.exit(f"logo: no block letter for {' '.join(missing)} (LOWER has {''.join(LOWER)})")
+    art = block_letters(word)
+    W, margin, top, gx = 880, 3, 42, 18    # gx: the gutter's left edge
+    # 19px, or smaller for a long word: the gutter's 6 columns, the letters, and the smudge's
+    # margin plus 3 on each side have to fit between the window's 18px insets
+    size = min(19, int((W - 36) / (6 + len(art[0]) + 2 * (margin + 3)) / CW))
+    cw, lh, rows_shown = size * CW, round(size * 22 / 19), 11
     x0 = gx + 6 * cw                       # where buffer text starts
+    pad = (int((W - 18 - x0) / cw) - len(art[0])) // 2  # columns left of the letters, to center them
     sy = top + rows_shown * lh + 6         # statusline
     H = sy + 52
-    name, word, sp, css = "dylan.txt", "dylan", Sprites(), []
-    art = block_letters(word)
+    name, sp, css = f"{word}.txt", Sprites(), []
     rng = random.Random(1)
     smudge = sketch(art, rng, margin)
     width = pad + len(art[0]) + margin
@@ -1349,13 +1360,20 @@ def start_widget(cfg: dict) -> str:
 
     # ── when everything happens ──
     steps, edits = strokes.steps, [s for s in strokes.steps if s.edit]
-    t, n = 1.4, len(steps)
-    for k, s in enumerate(steps):  # eases in, so the first few keys can be read, and out
+    n = len(steps)
+    # eases in, so the first few keys can be read, and out; a long word's middle runs faster, so
+    # the drawing still takes about 9 seconds
+    ease = [1 + 3 * max(0, 1 - k / 14) + 1.5 * max(0, 1 - (n - 1 - k) / 8) for k in range(n)]
+    gaps = [(0.03 if s.edit else 0.021) * e for s, e in zip(steps, ease)]
+    middle = sum(g for g, e in zip(gaps, ease) if e == 1)
+    speed = max(1, middle / (9 - (sum(gaps) - middle)))
+    t = 1.4
+    for s, g, e in zip(steps, gaps, ease):
         s.t = t
-        t += (0.03 if s.edit else 0.021) * (1 + 3 * max(0, 1 - k / 14) + 1.5 * max(0, 1 - (n - 1 - k) / 8))
+        t += g / speed if e == 1 else g
 
-    # then, at normal speed: G, o, the tagline typed on the new line (autoindent puts it under the
-    # y's tail), and :right to push it against the window's edge
+    # then, at normal speed: G, o, the tagline typed on the new line (autoindent lines it up with
+    # the line above), and :right to push it against the window's edge
     tagline, row = cfg["tagline"], len(target)
     indent = len(target[-1]) - len(target[-1].lstrip(" "))
     edge = int((W - 18 - x0) / cw) - 1  # the columns that fit, less one for a margin
@@ -1490,7 +1508,7 @@ def start_widget(cfg: dict) -> str:
             bxs = (zx - 17,) if z == "play" else (zx - 24, zx - 17)
             tri = "".join(f"M{bx:.1f} {sy + 6}l7 5l-7 5z" for bx in bxs)
             out += [f'<path d="{tri}" fill="{C["wall"]}"/>',
-                    text(zx - 6, sy + 15.5, "1×" if z == "play" else "8×", C["wall"], fs, font_weight="bold")]
+                    text(zx - 6, sy + 15.5, "1×" if z == "play" else f"{8 * speed:.0f}×", C["wall"], fs, font_weight="bold")]
         else:
             out.append(text(zx, sy + 15.5, z, C["wall"], fs, text_anchor="middle", font_weight="bold"))
         return "".join(out)
@@ -1560,7 +1578,7 @@ def start_widget(cfg: dict) -> str:
     css.append("@media (prefers-reduced-motion:reduce){*{animation:none!important}}")
     body.insert(0, sp.defs())
     return doc(W, H, body, "".join(css),
-               f"dylan as a rough ASCII smudge, drawn back into block letters in nvim with sped-up vim motions, "
+               f"{word} as a rough ASCII smudge, drawn back into block letters in nvim with sped-up vim motions, "
                f"then '{tagline}' typed underneath")
 
 
@@ -1983,7 +2001,7 @@ def render(cfg: dict) -> None:
     v.update(start="", garden="")
     if "start" in widgets:
         src = write_asset("widgets/start.svg", start_widget(cfg))
-        v["start"] = f'<p align="center">\n  <img src="{src}" width="100%" alt="dylan">\n</p>'
+        v["start"] = f'<p align="center">\n  <img src="{src}" width="100%" alt="{cfg["logo"]}">\n</p>'
     if "garden" in widgets and cfg.get("garden"):
         src = write_asset("widgets/garden.svg", garden_widget(cfg, state))
         v["garden"] = f'<p align="center">\n  <img src="{src}" width="100%" alt="zen garden">\n</p>'
