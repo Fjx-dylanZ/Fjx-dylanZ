@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Fjx-dylanZ"><img src="assets/desktop.svg?v=36a0598c" width="100%" alt="desktop · gh/btop"></a>
+  <a href="https://github.com/Fjx-dylanZ?tab=repositories"><img src="assets/desktop.svg?v=f02ec65c" width="100%" alt="desktop · ~/zsh"></a>
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@
 <p align="center"><sub>
   click a key, then <b>Create</b>: the focus moves for everyone in ~30s<br>
   no GitHub account? press anonymously: <a href="https://hjkl.dylanpict.workers.dev/gg"><b>gg</b></a> · <a href="https://hjkl.dylanpict.workers.dev/h"><b>h</b></a> · <a href="https://hjkl.dylanpict.workers.dev/j"><b>j</b></a> · <a href="https://hjkl.dylanpict.workers.dev/k"><b>k</b></a> · <a href="https://hjkl.dylanpict.workers.dev/l"><b>l</b></a><br>
-  <b>1</b> press so far · last <code>k</code>
+  <b>2</b> presses so far · last <code>gg</code>
 </sub></p>
 
 <br>
@@ -30,7 +30,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/widgets/garden.svg?v=7555aee7" width="100%" alt="zen garden">
+  <img src="assets/widgets/garden.svg?v=4e76c086" width="100%" alt="zen garden">
 </p>
 
 <p align="right"><sub>rebuilt daily by GitHub Actions · colors: Ghostty Citruszest + my JankyBorders config · data from 2026-10-14</sub></p>
