@@ -198,5 +198,10 @@
   "weather_code": 0,
   "wind_speed_10m": 14.3
  },
- "visits": []
+ "visits": [
+  {
+   "at": "2026-10-14T01:49:46Z",
+   "key": "k"
+  }
+ ]
 }
