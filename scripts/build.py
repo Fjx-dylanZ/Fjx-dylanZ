@@ -1097,7 +1097,10 @@ LOWER = {
 }
 BOX = {"═": "lr", "║": "ud", "╔": "rd", "╗": "ld", "╚": "ur", "╝": "ul",
        "╠": "udr", "╣": "udl", "╦": "lrd", "╩": "lru", "╬": "udlr"}
-CITRUS = ["#f77f00", "#ffdf40"]
+# The start screen's letters run top to bottom from sand to cream, and its rough smudge is grey:
+# bright orange is the desktop's focus color, so the title stays quieter than that.
+SAND = ["#c9a27e", "#e8dcc4"]
+SMUDGE = "#5a5a5a"
 RAMP = ".:-=+*#%@$"  # ASCII from light to dense, for the rough sketch the start screen begins as
 
 
@@ -1311,12 +1314,13 @@ class Sprites:
 
 def start_widget(cfg: dict) -> str:
     """The start screen: `dylan` as a rough ASCII smudge that can't be read, open in nvim, drawn
-    back into block letters by sped-up vim motions (the keys stream past at the bottom), written
-    with :w, then undone to the smudge again by a fast run of u.
+    back into block letters by sped-up vim motions (the keys stream past at the bottom), then the
+    tagline typed under them at normal speed and written with :w. It plays once per page view and
+    holds the finished screen, so the page has one less thing moving.
 
     Edits pile up rather than replace each other, so instead of redrawing whole frames each edit is
-    its own shape over the smudge, shown from when it's made until it's undone. The cursor, gutter,
-    status line and key stream run their own step-end timelines over the same loop."""
+    its own shape over the smudge, shown from when it's made. The cursor, gutter, status line and
+    key stream run their own step-end timelines over the same span, each holding its last frame."""
     W, size, lh, pad, margin = 880, 19, 22, 14, 3
     cw, rows_shown = size * CW, 11
     top, gx = 42, 18                       # first buffer row; gutter's left edge
@@ -1330,7 +1334,7 @@ def start_widget(cfg: dict) -> str:
     width = pad + len(art[0]) + margin
     start = [(" " * (pad - margin) + "".join(RAMP[i] if i >= 0 else " " for i in row)).ljust(width) for row in smudge]
     target = [(" " * pad + s).ljust(width) for s in art]
-    tones = [mix(*CITRUS, r / (len(art) - 1)) for r in range(len(art))]
+    tones = [mix(*SAND, r / (len(art) - 1)) for r in range(len(art))]
     at = lambda r, c: (round(x0 + c * cw, 1), top + r * lh)
 
     # each letter's columns, shadow column included; the first and last also take the margins
@@ -1383,15 +1387,7 @@ def start_widget(cfg: dict) -> str:
     press("<CR>", (row, home, False), cmd=written_msg, wait=0)
     opened, written = finale[1].t, t
 
-    # then a fast run of u takes back the :right, the new line, and every edit
-    rewind = written + 2.8
-    changes = ["align", "line"] + edits[::-1]
-    undone = {id(c): rewind + j * 1.5 / len(changes) for j, c in enumerate(changes)}
-    for s in edits:
-        s.undo = undone[id(s)]
-    unalign, unopen = undone[id(changes[0])], undone[id(changes[1])]
-    oldest = rewind + 1.5
-    period = oldest + 0.3
+    period = written + 3.0  # (the sweep and the key stream's exit; after that everything holds)
     pct = lambda t: f"{t / period * 100:.2f}%"
 
     def animate(name_, prop, points, rule=True, timing="step-end") -> str:
@@ -1400,7 +1396,7 @@ def start_widget(cfg: dict) -> str:
         points = sorted(points, key=lambda p: p[0])
         frames = "".join(f"{pct(t)}{{{prop}:{v}}}" for t, v in points) + f"100%{{{prop}:{points[-1][1]}}}"
         css.append(f"@keyframes {name_}{{{frames}}}"
-                   + (f".{name_}{{animation:{name_} {period:.2f}s {timing} infinite}}" if rule else ""))
+                   + (f".{name_}{{animation:{name_} {period:.2f}s {timing} forwards}}" if rule else ""))
         return name_
 
     def strip(name_, segments, clip) -> str:
@@ -1424,10 +1420,10 @@ def start_widget(cfg: dict) -> str:
                                        for v in row_] for row_ in smudge]
         body.append(f'<g class="b{i}" opacity=".85">' + "".join(
             grid_text(at(r, pad - margin)[0], top + r * lh + lh * 0.74, "".join(RAMP[v] if v >= 0 else " " for v in row_),
-                      cw, tones[r], size) for r, row_ in enumerate(rows)) + "</g>")
+                      cw, SMUDGE, size) for r, row_ in enumerate(rows)) + "</g>")
 
-    # ── every edit, from when it's made until it's undone; visual-block selections while they last ──
-    css.append(f".o{{animation:{period:.2f}s step-end infinite}}")
+    # ── every edit, from when it's made; visual-block selections while they last ──
+    css.append(f".o{{animation:{period:.2f}s step-end forwards}}")
     for k, s in enumerate(edits):
         r0, c0, r1, c1, ch = s.edit
         x, w = at(r0, c0)[0], round((c1 - c0 + 1) * cw, 1)
@@ -1438,7 +1434,7 @@ def start_widget(cfg: dict) -> str:
         else:
             shape = (f'<path d="{"".join(box_path(ch, at(r, c)[0], at(r, c)[1], cw, lh) for r in range(r0, r1 + 1) for c in range(c0, c1 + 1))}"'
                      f' fill="none" stroke="{C["inactive"]}" stroke-width="1.8"/>')
-        animate(f"e{k}", "opacity", [(0, 0), (s.t, 1), (s.undo, 0)], rule=False)
+        animate(f"e{k}", "opacity", [(0, 0), (s.t, 1)], rule=False)
         body.append(f'<g class="o" style="animation-name:e{k}">{shape}</g>')
     for k, s in enumerate(steps):
         if s.select:
@@ -1451,23 +1447,24 @@ def start_widget(cfg: dict) -> str:
     baseline = top + row * lh + lh * 0.74
     for i, (ch, e) in enumerate(zip(tagline, finale[2:])):
         if ch != " ":
-            animate(f"k{i}", "opacity", [(0, 0), (e.t, 1), (aligned, 0), (unalign, 1), (unopen, 0)], rule=False)
+            animate(f"k{i}", "opacity", [(0, 0), (e.t, 1), (aligned, 0)], rule=False)
             body.append(f'<g class="o" style="animation-name:k{i}" opacity="0">'
                         f'{text(at(row, indent + i)[0], round(baseline, 1), ch, C["dim"], size)}</g>')
-    animate("tag", "opacity", [(0, 0), (aligned, 1), (unalign, 0)], rule=False)
+    animate("tag", "opacity", [(0, 0), (aligned, 1)], rule=False)
     body.append(f'<g class="o" style="animation-name:tag">{grid_text(at(row, home)[0], baseline, tagline, cw, C["dim"], size)}</g>')
 
     # ── cursor (a beam in insert mode), gutter and cursorline ──
     moves = ([(0, (*first[:2], False))] + [(s.t, (*s.cur, False)) for s in steps]
-             + [(e.t, e.cur) for e in finale if e.cur] + [(unalign, (row, indent, False)), (unopen, (row - 1, indent, False))]
-             + [(s.undo, (*s.edit[:2], False)) for s in edits])
+             + [(e.t, e.cur) for e in finale if e.cur])
     blink = ([(0, 1), (0.5, 0), (1.0, 1)] + [(e.t, int(e.mode != "COMMAND")) for e in finale]
              + [(written + 0.55 * i, 1 - i % 2) for i in range(5)])
     body.append(f'<g transform="translate({x0:.1f} {top}) scale({cw:.1f} {lh})">'  # (in cells, so the keyframes stay short)
                 f'<g class="{animate("cur", "transform", [(t, f"translate({c}px,{r}px)" + (" scale(.15,1)" if beam else "")) for t, (r, c, beam) in moves])}">'
-                # (difference blending inverts what's under it, like a terminal's block cursor)
-                f'<rect class="{animate("blink", "opacity", blink)}" width="1" height="1" fill="#fff" opacity="0"'
-                f' style="mix-blend-mode:difference"/></g></g>')
+                # (difference blending inverts what's under it, like a terminal's block cursor;
+                # once everything has stopped it keeps blinking)
+                f'<g class="idle"><rect class="{animate("blink", "opacity", blink)}" width="1" height="1" fill="#fff" opacity="0"'
+                f' style="mix-blend-mode:difference"/></g></g></g>')
+    css.append(f"@keyframes idle{{50%{{opacity:0}}}}.idle{{animation:idle 1.1s step-end {period:.2f}s infinite}}")
 
     def gutter(cur_row, count) -> str:
         out = [rect(5.5, top + cur_row * lh, W - 11, lh, fill="#fff", fill_opacity=0.04)]
@@ -1476,7 +1473,7 @@ def start_widget(cfg: dict) -> str:
                             C["active"] if i == cur_row else C["mute"], 13.5, text_anchor="end",
                             font_weight="bold" if i == cur_row else None))
         return "".join(out)
-    count = lambda t: len(target) + (opened <= t < unopen)
+    count = lambda t: len(target) + (opened <= t)
     body.append(strip("gut", [(t, gutter(r, count(t))) for t, (r, _, _) in moves], (5.5, top, W - 11, rows_shown * lh)))
 
     # ── status line and command line ──
@@ -1490,9 +1487,9 @@ def start_widget(cfg: dict) -> str:
                                                (" ●" if modified else "", C["active"])], None, fs),
                rect(W - 5.5 - zw, sy, zw, 22, fill=color),
                text(W - 5.5 - zw - fw, sy + 15.5, "All", C["dim"], fs, text_anchor="end")]
-        if z in ("ff", "rw", "play"):  # a time-lapse badge: sped up, rewinding, or back to real time
+        if z in ("ff", "play"):  # a time-lapse badge: sped up, or back to real time
             bxs = (zx - 17,) if z == "play" else (zx - 24, zx - 17)
-            tri = "".join(f"M{bx + 7:.1f} {sy + 6}l-7 5l7 5z" if z == "rw" else f"M{bx:.1f} {sy + 6}l7 5l-7 5z" for bx in bxs)
+            tri = "".join(f"M{bx:.1f} {sy + 6}l7 5l-7 5z" for bx in bxs)
             out += [f'<path d="{tri}" fill="{C["wall"]}"/>',
                     text(zx - 6, sy + 15.5, "1×" if z == "play" else "8×", C["wall"], fs, font_weight="bold")]
         else:
@@ -1506,12 +1503,10 @@ def start_widget(cfg: dict) -> str:
     ruler = lambda r, c: f"{r + 1}:{c + 1}"
     bar = [(0, status(z=ruler(*first[:2])))] + [(s.t, status("VISUAL BLOCK" if s.select else "NORMAL", z="ff")) for s in steps]
     bar += [(e.t, status(e.mode, z="play")) for e in finale[:-1]]
-    bar += [(written, status(modified=False, z=ruler(row, home))), (rewind, status(z="rw")), (oldest, status(z=ruler(*first[:2])))]
-    said = [(0, cmdline("Already at oldest change")), (steps[0].t, cmdline(""))]
+    bar += [(written, status(modified=False, z=ruler(row, home)))]
+    opening = f'"{name}" {len(start)}L, {sum(len(s.rstrip().encode()) + 1 for s in start)}B'  # what nvim says on opening it
+    said = [(0, cmdline(opening)), (steps[0].t, cmdline(""))]
     said += [(e.t, cmdline(e.cmd, e.mode == "COMMAND")) for e in finale if e.cmd]
-    said += [(undone[id(c)], cmdline(f"1 change; before #{len(changes) - j}  4 seconds ago"))
-             for j, c in enumerate(changes) if j % 8 == 0]
-    said.append((oldest, cmdline("Already at oldest change")))
     body.append(strip("st", bar, (5.5, sy, W - 11, 22)))
     body.append(strip("cmd", said, (5.5, sy + 22, W - 11, H - 4.5 - sy - 22)))
 
@@ -1519,8 +1514,7 @@ def start_widget(cfg: dict) -> str:
     px, py, pw = W - 24 - 340, sy + 25, 340
     fs = 14
     kw_ = round(fs * CW, 1)
-    keys = ([(s.t, s.keys, False) for s in steps] + [(e.t, e.keys, e.join) for e in finale]
-            + [(undone[id(c)], "u", False) for c in changes] + [(oldest, "u", False)])
+    keys = [(s.t, s.keys, False) for s in steps] + [(e.t, e.keys, e.join) for e in finale]
     stream, ends = "", []
     for t, k, join in keys:
         stream += ("" if join or not stream else " ") + k
@@ -1539,13 +1533,10 @@ def start_widget(cfg: dict) -> str:
         elif ch == "␣":
             out.append(f'<path d="M{cx + 1.5:.1f} {py + 13}v4h{kw_ - 3:.1f}v-4" fill="none" stroke="{C["dim"]}" stroke-width="1.2"/>')
     right = px + pw - 12
-    shown = animate("rib", "opacity", [(0, 0), (steps[0].t, 1)])
-    # it glides between every 4th key while they come fast, which reads the same and keeps this
-    # short, and holds still on the :w<CR> until the undos start
+    shown = animate("rib", "opacity", [(0, 0), (steps[0].t, 1), (written + 2.2, 0)])  # gone once the file's written
+    # it glides between every 4th key while they come fast, which reads the same and keeps this short
     shift = lambda end: f"translateX({right - end:.0f}px)"
-    last = len(steps) + len(finale) - 1
-    glide = [(t, shift(end)) for k, (t, end) in enumerate(ends) if k < 14 or k % 4 == 0 or len(steps) - 2 <= k <= last + 1]
-    glide += [(rewind - 0.01, shift(ends[last][1])), (ends[-1][0], shift(ends[-1][1]))]
+    glide = [(t, shift(end)) for k, (t, end) in enumerate(ends) if k < 14 or k % 4 == 0 or k >= len(steps) - 2]
     flow = animate("flow", "transform", glide, timing="linear")
     body += ['<linearGradient id="fade" x1="0" x2="1"><stop offset="0" stop-color="#1f1f1f"/>'
              '<stop offset="1" stop-color="#1f1f1f" stop-opacity="0"/></linearGradient>',
@@ -1558,7 +1549,7 @@ def start_widget(cfg: dict) -> str:
     left, span = x0 + pad * cw, len(art[0]) * cw + 240
     css.append(f"@keyframes sweep{{0%,{pct(written + 0.05)}{{transform:translateX(0)}}"
                f"{pct(written + 0.95)},100%{{transform:translateX({span:.0f}px)}}}}"
-               f".sweep{{animation:sweep {period:.2f}s linear infinite}}")
+               f".sweep{{animation:sweep {period:.2f}s linear forwards}}")
     letters = "".join(f"M{x0 + m.start() * cw:.1f} {top + r * lh}h{(m.end() - m.start()) * cw:.1f}v{lh}h{-(m.end() - m.start()) * cw:.1f}z"
                       for r, s in enumerate(target) for m in re.finditer(r"█+", s))
     body += ['<linearGradient id="shine" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/>'

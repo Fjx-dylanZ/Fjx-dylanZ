@@ -6,12 +6,13 @@ name = "Dylan Zhang"
 tagline = "probably editing a dotfile right now"
 education = "Columbia '24 · Emory '22"
 # `cat now.txt` in the zsh pane prints "<now_prefix> <phrase>", the phrase morphing through
-# this list on a loop. Keep phrases under ~28 characters.
+# this list on a loop (about 1.7s each). Keep phrases under ~28 characters. The glitch phrase sits
+# late in the list so its crash lands after the start screen has finished drawing (~18s).
 now_prefix = "working on the next"
 now = [
-  "tui", "espresso", "obsidian plugin", "hyperparameter tuning", "recursive self improvement",
-  "yak to shave", "cli", "loss curve to stare at", "agent harness", "dotfile tweak",
-  "leetcode question", "rewrite in rust", "homebrew formula", "2am refactor",
+  "tui", "espresso", "obsidian plugin", "hyperparameter tuning", "yak to shave", "cli",
+  "loss curve to stare at", "agent harness", "dotfile tweak", "leetcode question",
+  "rewrite in rust", "homebrew formula", "recursive self improvement", "2am refactor",
   "gpu i can't afford", "mechanical keyboard", "keybinding nobody asked for",
 ]
 # When this phrase comes up, the whole terminal crashes into a hex dump and reboots.
