@@ -1930,10 +1930,13 @@ def write_asset(rel: str, content: str) -> str:
     return f"assets/{rel}"
 
 
-def prune_assets() -> None:
-    """Drop generated files that this render no longer uses."""
+def prune_assets(previous: str = "") -> None:
+    """Drop generated files that neither this render nor the README it replaces (`previous`) uses.
+    Keeping the last version a little longer means a profile page loaded just before an update
+    can still fetch the images it hasn't loaded yet (the ones further down load lazily)."""
+    keep = WRITTEN | {ROOT / m for m in re.findall(r"assets/[\w./-]+\.svg", previous)}
     for path in sorted(ASSETS.rglob("*"), reverse=True):
-        if path.is_file() and path not in WRITTEN:
+        if path.is_file() and path not in keep:
             path.unlink()
         elif path.is_dir() and not any(path.iterdir()):
             path.rmdir()
@@ -1989,8 +1992,9 @@ def render(cfg: dict) -> None:
     out = TEMPLATE.read_text()
     for key, value in v.items():
         out = out.replace("{{" + key + "}}", value)
+    previous = README.read_text() if README.exists() else ""
     README.write_text(out)
-    prune_assets()
+    prune_assets(previous)
 
 
 def main(argv: list[str]) -> int:
