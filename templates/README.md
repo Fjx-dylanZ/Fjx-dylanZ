@@ -17,10 +17,7 @@
 
 <br>
 
-<p align="center">
-  <b>{{name}}</b> · {{tagline}}<br>
-  <sub>made {{made}}</sub>
-</p>
+<p align="center"><sub>made {{made}}</sub></p>
 
 {{garden}}
 
