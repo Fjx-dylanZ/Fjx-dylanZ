@@ -123,8 +123,7 @@ def load_state(cfg: dict) -> dict:
     state = json.loads(STATE.read_text()) if STATE.exists() else {}
     spaces = cfg["workspace"]
     state.setdefault("presses", 0)
-    state.pop("players", None)  # (state once kept usernames; it doesn't anymore)
-    state["log"] = [{k: e[k] for k in ("key", "at", "to") if k in e} for e in state.get("log", [])]
+    state.setdefault("log", [])
     state.update(clamp_focus(spaces, state))
     if state.get("prev"):
         state["prev"] = clamp_focus(spaces, state["prev"])
@@ -451,7 +450,7 @@ def w_nsk(ctx, x, y, w, h):
             lines.append((output, t))
             at[key] = t
             t += 0.6
-        t += 1.2 if pages else 1.0  # (then it clears, or loops)
+        t += 1.2 if pages else 1.0  # then it clears, or loops
         pages.append((lines, t))
     T = t
 
@@ -820,7 +819,7 @@ def key_shape(x, y, w, h, label, sub, color, hot) -> list[str]:
 @kind("keyboard", "karabiner — hyper layer", 540)
 def w_keyboard(ctx, x, y, w, h):
     u, gap, kh = 34, 4, 32
-    hot = ctx.state["log"][0]["key"][0] if ctx.state["log"] else None  # (gg lights up g)
+    hot = ctx.state["log"][0]["key"][0] if ctx.state["log"] else None  # gg lights up g
     special = {"tab": ("hyper", "active"), "caps": ("⌃ · esc", "green"), "a": ("", "green"), "s": ("", "green"),
                "h": ("←", "active"), "j": ("↓", "active"), "k": ("↑", "active"), "l": ("→", "active")}
     rows = [("tab", 1.5, "qwertyuiop"), ("caps", 1.75, "asdfghjkl;"), ("shift", 2.25, "zxcvbnm,./")]
@@ -1097,8 +1096,8 @@ LOWER = {
 }
 BOX = {"═": "lr", "║": "ud", "╔": "rd", "╗": "ld", "╚": "ur", "╝": "ul",
        "╠": "udr", "╣": "udl", "╦": "lrd", "╩": "lru", "╬": "udlr"}
-# The start screen's letters run top to bottom from sand to cream, and its rough smudge is grey:
-# bright orange is the desktop's focus color, so the title stays quieter than that.
+# The start screen's letter gradient, top to bottom, and the grey of its smudge. Bright orange is
+# kept for focus on the desktop.
 SAND = ["#c9a27e", "#e8dcc4"]
 SMUDGE = "#5a5a5a"
 RAMP = ".:-=+*#%@$"  # ASCII from light to dense, for the rough sketch the start screen begins as
@@ -1316,11 +1315,11 @@ def start_widget(cfg: dict) -> str:
     """The start screen: `dylan` as a rough ASCII smudge that can't be read, open in nvim, drawn
     back into block letters by sped-up vim motions (the keys stream past at the bottom), then the
     tagline typed under them at normal speed and written with :w. It plays once per page view and
-    holds the finished screen, so the page has one less thing moving.
+    holds the finished screen.
 
-    Edits pile up rather than replace each other, so instead of redrawing whole frames each edit is
-    its own shape over the smudge, shown from when it's made. The cursor, gutter, status line and
-    key stream run their own step-end timelines over the same span, each holding its last frame."""
+    Edits pile up, so each is its own shape over the smudge, shown from when it's made. The cursor,
+    gutter, status line and key stream run their own step-end timelines over the same span, each
+    holding its last frame."""
     W, size, lh, pad, margin = 880, 19, 22, 14, 3
     cw, rows_shown = size * CW, 11
     top, gx = 42, 18                       # first buffer row; gutter's left edge
@@ -1343,7 +1342,7 @@ def start_widget(cfg: dict) -> str:
         w = max(map(len, LOWER[ch])) + 1
         spans.append((0 if i == 0 else x, width - 1 if i == len(word) - 1 else x + w - 1))
         x += w
-    # start the cursor where the first edit is: that's where undoing everything leaves it
+    # start the cursor on the first edit
     first = next(s.edit for s in redraw(start, target, spans, (0, 0)).steps if s.edit)
     strokes = redraw(start, target, spans, first[:2])
     assert strokes.lines == target, "the strokes should redraw the logo exactly"
@@ -1387,7 +1386,7 @@ def start_widget(cfg: dict) -> str:
     press("<CR>", (row, home, False), cmd=written_msg, wait=0)
     opened, written = finale[1].t, t
 
-    period = written + 3.0  # (the sweep and the key stream's exit; after that everything holds)
+    period = written + 3.0  # the sweep and the key stream's exit, then everything holds
     pct = lambda t: f"{t / period * 100:.2f}%"
 
     def animate(name_, prop, points, rule=True, timing="step-end") -> str:
@@ -1443,7 +1442,7 @@ def start_widget(cfg: dict) -> str:
             body.append(f'<g class="o" style="animation-name:v{k}" opacity="0">'
                         f'{rect(*at(r0, c0), round((c1 - c0 + 1) * cw, 1), (r1 - r0 + 1) * lh, fill=C["magenta"], fill_opacity=0.35)}</g>')
 
-    # ── the tagline, in grey so it doesn't compete: each character as it's typed, then the line where :right puts it ──
+    # ── the tagline, in grey: each character as it's typed, then the line where :right puts it ──
     baseline = top + row * lh + lh * 0.74
     for i, (ch, e) in enumerate(zip(tagline, finale[2:])):
         if ch != " ":
@@ -1534,7 +1533,7 @@ def start_widget(cfg: dict) -> str:
             out.append(f'<path d="M{cx + 1.5:.1f} {py + 13}v4h{kw_ - 3:.1f}v-4" fill="none" stroke="{C["dim"]}" stroke-width="1.2"/>')
     right = px + pw - 12
     shown = animate("rib", "opacity", [(0, 0), (steps[0].t, 1), (written + 2.2, 0)])  # gone once the file's written
-    # it glides between every 4th key while they come fast, which reads the same and keeps this short
+    # while keys come fast it glides between every 4th one, to keep the keyframes short
     shift = lambda end: f"translateX({right - end:.0f}px)"
     glide = [(t, shift(end)) for k, (t, end) in enumerate(ends) if k < 14 or k % 4 == 0 or k >= len(steps) - 2]
     flow = animate("flow", "transform", glide, timing="linear")
@@ -1662,7 +1661,7 @@ def grow(garden: dict, planted: str) -> SimpleNamespace:
             rake = max(0.0, rake - 0.4)
             effects.append(("wind", C["blue2"]))
         fallen = fallen * 0.97 + (1 + 3 * (wind >= 25) if month in (10, 11) else 0)
-        # (the day's weather code is its worst moment, so say it with sun hours and rain instead)
+        # describe the day by rain, snow and sun hours: its weather code is only its worst moment
         if snow:
             words = f"snow {snow / 2.54:.1f}in"
         elif rain >= 1:
@@ -1918,9 +1917,9 @@ WRITTEN: set[Path] = set()
 
 def write_asset(rel: str, content: str) -> str:
     """Write a generated file with its content hash in the name (desktop.svg -> desktop.1a2b3c4d.svg)
-    and return the path the README should use. A new version gets a new path: a ?v= query wouldn't
-    do, because GitHub's raw/ links redirect to raw.githubusercontent.com without it, and that
-    caches every path for five minutes."""
+    and return the path the README should use. New content needs a new path: GitHub's raw/ links
+    redirect to raw.githubusercontent.com without any query string, and that caches each path for
+    five minutes."""
     stem, _, ext = rel.rpartition(".")
     rel = f"{stem}.{hashlib.sha1(content.encode()).hexdigest()[:8]}.{ext}"
     path = ASSETS / rel
@@ -1932,8 +1931,8 @@ def write_asset(rel: str, content: str) -> str:
 
 def prune_assets(previous: str = "") -> None:
     """Drop generated files that neither this render nor the README it replaces (`previous`) uses.
-    Keeping the last version a little longer means a profile page loaded just before an update
-    can still fetch the images it hasn't loaded yet (the ones further down load lazily)."""
+    The previous files stay so a profile page loaded just before an update can still fetch its
+    lazily loaded images."""
     keep = WRITTEN | {ROOT / m for m in re.findall(r"assets/[\w./-]+\.svg", previous)}
     for path in sorted(ASSETS.rglob("*"), reverse=True):
         if path.is_file() and path not in keep:
