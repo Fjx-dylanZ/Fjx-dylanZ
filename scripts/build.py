@@ -1965,7 +1965,7 @@ def render(cfg: dict) -> None:
     keys = []
     for key, (_, _, action, legend) in KEYS.items():
         src = write_asset(f"keys/{key}.svg", keycap(key, legend))
-        keys.append(f'<a href="{issue_url(login, key)}"><img src="{src}" width="56" alt="{key}: {action}"></a>')
+        keys.append(f'<a href="{issue_url(login, key)}"><img src="{src}" width="56" alt="{key} {legend}"></a>')
     v["keys"] = "\n".join(f"  {k}" for k in keys)
 
     last = state["log"][0] if state["log"] else None
@@ -1984,12 +1984,10 @@ def render(cfg: dict) -> None:
     v.update(start="", garden="")
     if "start" in widgets:
         src = write_asset("widgets/start.svg", start_widget(cfg))
-        v["start"] = (f'<p align="center">\n  <img src="{src}" width="100%" alt="dylan in block letters, open in nvim: '
-                      f'drawn back from a rough ASCII smudge with sped-up vim motions, then {esc(cfg["tagline"])} typed under it">\n</p>')
+        v["start"] = f'<p align="center">\n  <img src="{src}" width="100%" alt="dylan">\n</p>'
     if "garden" in widgets and cfg.get("garden"):
         src = write_asset("widgets/garden.svg", garden_widget(cfg, state))
-        v["garden"] = (f'<p align="center">\n  <img src="{src}" width="100%" alt="a zen garden that grows with '
-                       f'{esc(cfg["garden"].get("place", "local"))} weather and keypresses">\n</p>')
+        v["garden"] = f'<p align="center">\n  <img src="{src}" width="100%" alt="zen garden">\n</p>'
 
     out = TEMPLATE.read_text()
     for key, value in v.items():

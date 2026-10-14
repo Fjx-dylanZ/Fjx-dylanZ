@@ -3,7 +3,7 @@
 {{start}}
 
 <p align="center">
-  <a href="{{link}}"><img src="{{desktop}}" width="100%" alt="{{name}}'s desktop as a tiling window manager you can drive with hjkl. Focus is on {{focus}}."></a>
+  <a href="{{link}}"><img src="{{desktop}}" width="100%" alt="desktop · {{focus}}"></a>
 </p>
 
 <p align="center">
