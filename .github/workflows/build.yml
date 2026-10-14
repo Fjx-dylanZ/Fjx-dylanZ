@@ -1,0 +1,36 @@
+name: build
+
+on:
+  schedule:
+    - cron: "23 17 * * *"  # early afternoon in New York, for the garden's weather
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [profile.toml, templates/**, scripts/**]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch, render and push
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Keypress jobs push to main too; on a race, start over from the new head.
+          for attempt in 1 2 3 4 5; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            python3 scripts/build.py fetch render
+            git add -A README.md assets data
+            git diff --cached --quiet && exit 0
+            git commit -qm "build: refresh profile"
+            git push -q origin HEAD:main && exit 0
+            sleep $((RANDOM % 10 + 1))
+          done
+          exit 1

@@ -1,0 +1,30 @@
+# The anonymous route for the README's hjkl keys. Setup and deploy: see README.md here.
+name = "hjkl"
+main = "src/index.js"
+compatibility_date = "2026-06-01"
+workers_dev = true
+
+[vars]
+OWNER = "Fjx-dylanZ"
+REPO = "Fjx-dylanZ"
+# The Turnstile widget's site key (public; its secret key is a Worker secret). Local dev overrides it
+# with Turnstile's always-passes test key in .dev.vars.
+TURNSTILE_SITEKEY = "0x4AAAAAAFWJau0yV2YzgWWL"
+
+# A few presses per visitor every 10 seconds, and a ceiling for everyone together, so a burst
+# can't turn into a burst of commits. (Counted per Cloudflare location.)
+[[ratelimits]]
+name = "PER_VISITOR"
+namespace_id = "4101"
+
+  [ratelimits.simple]
+  limit = 3
+  period = 10
+
+[[ratelimits]]
+name = "EVERYONE"
+namespace_id = "4102"
+
+  [ratelimits.simple]
+  limit = 30
+  period = 60

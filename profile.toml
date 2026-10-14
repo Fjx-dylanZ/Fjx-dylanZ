@@ -1,0 +1,92 @@
+# Content for the profile README. Contribution numbers come from the GitHub API at build time.
+# After editing, run: python3 scripts/build.py fetch render
+
+login = "Fjx-dylanZ"
+name = "Dylan Zhang"
+tagline = "probably editing a dotfile right now"
+education = "Columbia '24 · Emory '22"
+# `cat now.txt` in the zsh pane prints "<now_prefix> <phrase>", the phrase morphing through
+# this list on a loop. Keep phrases under ~28 characters.
+now_prefix = "working on the next"
+now = [
+  "tui", "espresso", "obsidian plugin", "hyperparameter tuning", "recursive self improvement",
+  "yak to shave", "cli", "loss curve to stare at", "agent harness", "dotfile tweak",
+  "leetcode question", "rewrite in rust", "homebrew formula", "2am refactor",
+  "gpu i can't afford", "mechanical keyboard", "keybinding nobody asked for",
+]
+# When this phrase comes up, the whole terminal crashes into a hex dump and reboots.
+now_glitch = "recursive self improvement"
+
+# Small print under the desktop, and the `ls ~/src` in its terminal. Own repos only.
+made = ["native-space-kit", "obsidian-drawer-explorer", "omp-subagent-entropy", "appletv-remote-tui"]
+# Upstream projects I've had changes merged into (owner/repo).
+patches = ["karinushka/paneru"]
+
+# Extra widgets around the desktop, any of: start (my name drawn back from a rough ASCII smudge
+# with sped-up vim motions, above the desktop) and garden (the zen garden below, see [garden]).
+widgets = ["start", "garden"]
+
+[fastfetch]
+host = "dylan@mbp"
+rows = [
+  ["OS", "macOS"],
+  ["WM", "paneru"],
+  ["Borders", "JankyBorders"],
+  ["Terminal", "ghostty"],
+  ["Theme", "Citruszest"],
+  ["Shell", "zsh"],
+  ["Editor", "nvim · LazyVim"],
+  ["Agents", "herdr · omp"],
+  ["Hyper", "hold tab"],
+  ["Escape", "tap caps"],
+]
+
+# Presses without a GitHub account go through a small Cloudflare Worker (worker/, see its README).
+# Once it's deployed, put its URL here and the README offers that route under the keys.
+[hjkl]
+anonymous = "https://hjkl.dylanpict.workers.dev"
+
+# The desktop. Each workspace is a row: j/k move between rows, h/l between the windows in one.
+# Window ids are renderers in scripts/build.py; `link` is where the desktop image points
+# while that window has focus.
+
+[[workspace]]
+key = "~"
+windows = [
+  { id = "zsh", link = "https://github.com/Fjx-dylanZ?tab=repositories" },
+  { id = "fastfetch", link = "https://github.com/fastfetch-cli/fastfetch" },
+  { id = "atv", link = "https://github.com/Fjx-dylanZ/appletv-remote-tui" },
+  { id = "nsk", link = "https://github.com/Fjx-dylanZ/native-space-kit" },
+]
+
+[[workspace]]
+key = "rice"
+windows = [
+  { id = "ghostty", link = "https://ghostty.org" },
+  { id = "borders", link = "https://github.com/FelixKratz/JankyBorders" },
+  { id = "nvim", link = "https://github.com/karinushka/paneru" },
+  { id = "keyboard", link = "https://karabiner-elements.pqrs.org" },
+]
+
+[[workspace]]
+key = "agents"
+windows = [
+  { id = "herdr", link = "https://github.com/herdrdev/herdr" },
+  { id = "entropy", link = "https://github.com/Fjx-dylanZ/omp-subagent-entropy" },
+]
+
+[[workspace]]
+key = "gh"
+windows = [
+  { id = "btop", link = "https://github.com/Fjx-dylanZ" },
+  { id = "hjkl", link = "https://github.com/Fjx-dylanZ/Fjx-dylanZ/issues?q=hjkl" },
+]
+
+# A zen garden at the bottom that grows with the real weather here (from Open-Meteo, once a day)
+# and with every keypress on the desktop. Planted on the first day of autumn.
+[garden]
+planted = 2026-09-22
+place = "nyc"
+latitude = 40.7128
+longitude = -74.006
+timezone = "America/New_York"

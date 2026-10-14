@@ -1,0 +1,5 @@
+# Copy to .dev.vars for `npx wrangler dev`. These are Turnstile's always-passes test keys.
+# Leave GITHUB_TOKEN out locally: presses are then a dry run and only logged.
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+SALT=local
+TURNSTILE_SITEKEY=1x00000000000000000000AA

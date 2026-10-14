@@ -1,0 +1,54 @@
+name: hjkl
+
+# A visitor clicks a keycap in the README, which opens a pre-filled issue titled
+# "hjkl: <key>". This moves the shared focus, re-renders, and closes the issue.
+# Anonymous presses arrive as a repository_dispatch from the Worker in worker/ instead.
+# Nothing about who pressed is stored or committed either way.
+
+on:
+  issues:
+    types: [opened]
+  repository_dispatch:
+    types: [hjkl]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  press:
+    if: github.event_name == 'repository_dispatch' || startsWith(github.event.issue.title, 'hjkl:')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply the key, render and push
+        env:
+          # Untrusted input: passed through env and validated by build.py, never interpolated into the script.
+          TITLE: ${{ github.event_name == 'repository_dispatch' && format('hjkl: {0}', github.event.client_payload.key) || github.event.issue.title }}
+          LOGIN: ${{ github.event.issue.user.login }}  # empty for anonymous presses; only used to say thanks
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3 4 5; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            if ! python3 scripts/build.py press "$TITLE" "$LOGIN" > "$RUNNER_TEMP/reply.md"; then
+              exit 0  # invalid key: the reply explains it, nothing to commit
+            fi
+            git add -A README.md assets data
+            git commit -qm "hjkl: a keypress"
+            git push -q origin HEAD:main && exit 0
+            sleep $((RANDOM % 5 + 1))
+          done
+          echo "Couldn't push after 5 attempts; please try again in a minute." > "$RUNNER_TEMP/reply.md"
+          exit 1
+
+      - name: Reply and close
+        if: always() && github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMBER: ${{ github.event.issue.number }}
+        run: |
+          reply="$RUNNER_TEMP/reply.md"
+          [ -s "$reply" ] || echo "Something went wrong applying that key." > "$reply"
+          gh issue close "$NUMBER" --repo "$GITHUB_REPOSITORY" --comment "$(cat "$reply")"
