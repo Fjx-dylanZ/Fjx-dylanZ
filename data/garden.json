@@ -203,9 +203,9 @@
   "date": "2026-10-14",
   "is_day": 1,
   "precipitation": 0.0,
-  "temperature_2m": 25.1,
-  "weather_code": 3,
-  "wind_speed_10m": 14.5
+  "temperature_2m": 25.8,
+  "weather_code": 0,
+  "wind_speed_10m": 16.4
  },
  "visits": [
   {
