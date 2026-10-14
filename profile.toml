@@ -42,8 +42,8 @@ rows = [
   ["Escape", "tap caps"],
 ]
 
-# Presses without a GitHub account go through a small Cloudflare Worker (worker/, see its README).
-# Once it's deployed, put its URL here and the README offers that route under the keys.
+# The Cloudflare Worker (worker/) that takes presses without a GitHub account. The README links
+# it under the keys; empty hides that route.
 [hjkl]
 anonymous = "https://hjkl.dylanpict.workers.dev"
 

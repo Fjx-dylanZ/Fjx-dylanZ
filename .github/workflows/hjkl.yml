@@ -2,7 +2,7 @@ name: hjkl
 
 # A visitor clicks a keycap in the README, which opens a pre-filled issue titled
 # "hjkl: <key>". This moves the shared focus, re-renders, and closes the issue.
-# Anonymous presses arrive as a repository_dispatch from the Worker in worker/ instead.
+# Anonymous presses arrive as a repository_dispatch from the Worker in worker/.
 # Nothing about who pressed is stored or committed either way.
 
 on:
@@ -25,7 +25,7 @@ jobs:
       - name: Apply the key, render and push
         env:
           # Untrusted input: passed through env and validated by build.py, never interpolated into the script.
-          # (quoted: "hjkl: {0}" would otherwise read as a YAML mapping)
+          # Quoted, or "hjkl: {0}" would read as a YAML mapping.
           TITLE: "${{ github.event_name == 'repository_dispatch' && format('hjkl: {0}', github.event.client_payload.key) || github.event.issue.title }}"
           LOGIN: ${{ github.event.issue.user.login }}  # empty for anonymous presses; only used to say thanks
         run: |
