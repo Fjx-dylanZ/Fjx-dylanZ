@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Fjx-dylanZ?tab=repositories"><img src="assets/desktop.svg?v=6855204d" width="100%" alt="Dylan Zhang's desktop as a tiling window manager you can drive with hjkl. Focus is on ~/zsh."></a>
+  <a href="https://github.com/Fjx-dylanZ?tab=repositories"><img src="assets/desktop.svg?v=5c5ac40d" width="100%" alt="Dylan Zhang's desktop as a tiling window manager you can drive with hjkl. Focus is on ~/zsh."></a>
 </p>
 
 <p align="center">
@@ -30,7 +30,7 @@
 </p>
 
 <p align="center">
-  <img src="assets/widgets/garden.svg?v=5fc8a1e3" width="100%" alt="a zen garden that grows with nyc weather and keypresses">
+  <img src="assets/widgets/garden.svg?v=81ad22d1" width="100%" alt="a zen garden that grows with nyc weather and keypresses">
 </p>
 
 <p align="right"><sub>rebuilt daily by GitHub Actions · colors: Ghostty Citruszest + my JankyBorders config · data from 2026-10-14</sub></p>
