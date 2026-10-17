@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Fjx-dylanZ?tab=repositories"><img src="assets/desktop.8a937c19.svg" width="100%" alt="desktop · ~/zsh"></a>
+  <a href="https://github.com/Fjx-dylanZ?tab=repositories"><img src="assets/desktop.8e1c1247.svg" width="100%" alt="desktop · ~/zsh"></a>
 </p>
 
 <p align="center">
@@ -27,7 +27,7 @@
 <p align="center"><sub>made <a href="https://github.com/Fjx-dylanZ/native-space-kit">native-space-kit</a> · <a href="https://github.com/Fjx-dylanZ/obsidian-drawer-explorer">obsidian-drawer-explorer</a> · <a href="https://github.com/Fjx-dylanZ/omp-subagent-entropy">omp-subagent-entropy</a> · <a href="https://github.com/Fjx-dylanZ/appletv-remote-tui">appletv-remote-tui</a> · patches to <a href="https://github.com/karinushka/paneru">paneru</a></sub></p>
 
 <p align="center">
-  <img src="assets/widgets/garden.746e92af.svg" width="100%" alt="zen garden">
+  <img src="assets/widgets/garden.3581a203.svg" width="100%" alt="zen garden">
 </p>
 
-<p align="right"><sub>rebuilt daily by GitHub Actions · colors: Ghostty Citruszest + my JankyBorders config · data from 2026-10-16</sub></p>
+<p align="right"><sub>rebuilt daily by GitHub Actions · colors: Ghostty Citruszest + my JankyBorders config · data from 2026-10-17</sub></p>
