@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/fastfetch-cli/fastfetch"><img src="assets/desktop.d58a94ba.svg" width="100%" alt="desktop · ~/fastfetch"></a>
+  <a href="https://github.com/fastfetch-cli/fastfetch"><img src="assets/desktop.0362239b.svg" width="100%" alt="desktop · ~/fastfetch"></a>
 </p>
 
 <p align="center">
@@ -30,4 +30,4 @@
   <img src="assets/widgets/garden.306a59ff.svg" width="100%" alt="zen garden">
 </p>
 
-<p align="right"><sub>rebuilt daily by GitHub Actions · colors: Ghostty Citruszest + my JankyBorders config · data from 2026-10-20</sub></p>
+<p align="right"><sub>rebuilt daily by GitHub Actions · colors: Ghostty Citruszest + my JankyBorders config · data from 2026-10-21</sub></p>
