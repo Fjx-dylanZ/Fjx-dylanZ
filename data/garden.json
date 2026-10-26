@@ -296,15 +296,24 @@
    "temperature_2m_min": 4.7,
    "weather_code": 3,
    "wind_speed_10m_max": 7.2
+  },
+  "2026-10-25": {
+   "precipitation_sum": 0.0,
+   "snowfall_sum": 0.0,
+   "sunshine_duration": 38014.06,
+   "temperature_2m_max": 19.3,
+   "temperature_2m_min": 3.5,
+   "weather_code": 1,
+   "wind_speed_10m_max": 10.2
   }
  },
  "now": {
-  "date": "2026-10-25",
+  "date": "2026-10-26",
   "is_day": 1,
   "precipitation": 0.0,
-  "temperature_2m": 19.2,
+  "temperature_2m": 20.0,
   "weather_code": 0,
-  "wind_speed_10m": 7.4
+  "wind_speed_10m": 8.7
  },
  "visits": [
   {
