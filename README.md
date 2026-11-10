@@ -27,7 +27,7 @@
 <p align="center"><sub>made <a href="https://github.com/Fjx-dylanZ/native-space-kit">native-space-kit</a> · <a href="https://github.com/Fjx-dylanZ/obsidian-drawer-explorer">obsidian-drawer-explorer</a> · <a href="https://github.com/Fjx-dylanZ/omp-subagent-entropy">omp-subagent-entropy</a> · <a href="https://github.com/Fjx-dylanZ/appletv-remote-tui">appletv-remote-tui</a> · patches to <a href="https://github.com/karinushka/paneru">paneru</a></sub></p>
 
 <p align="center">
-  <img src="assets/widgets/garden.9f2cd9f2.svg" width="100%" alt="zen garden">
+  <img src="assets/widgets/garden.c8042ba9.svg" width="100%" alt="zen garden">
 </p>
 
 <p align="right"><sub>rebuilt daily by GitHub Actions · colors: Ghostty Citruszest + my JankyBorders config · data from 2026-11-10</sub></p>
