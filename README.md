@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Fjx-dylanZ?tab=repositories"><img src="assets/desktop.86384ed6.svg" width="100%" alt="desktop · ~/zsh"></a>
+  <a href="https://github.com/Fjx-dylanZ?tab=repositories"><img src="assets/desktop.b9a06b18.svg" width="100%" alt="desktop · ~/zsh"></a>
 </p>
 
 <p align="center">
