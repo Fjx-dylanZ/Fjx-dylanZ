@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Fjx-dylanZ?tab=repositories"><img src="assets/desktop.c4a8f344.svg" width="100%" alt="desktop · ~/zsh"></a>
+  <a href="https://github.com/Fjx-dylanZ?tab=repositories"><img src="assets/desktop.86384ed6.svg" width="100%" alt="desktop · ~/zsh"></a>
 </p>
 
 <p align="center">
@@ -30,4 +30,4 @@
   <img src="assets/widgets/garden.972f337a.svg" width="100%" alt="zen garden">
 </p>
 
-<p align="right"><sub>rebuilt daily by GitHub Actions · colors: Ghostty Citruszest + my JankyBorders config · data from 2026-11-15</sub></p>
+<p align="right"><sub>rebuilt daily by GitHub Actions · colors: Ghostty Citruszest + my JankyBorders config · data from 2026-11-17</sub></p>
